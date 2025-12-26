@@ -1,11 +1,15 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "webapp",
+  "name": "sistema-agendamento",
   "compatibility_date": "2025-12-23",
   "pages_build_output_dir": "./dist",
   "compatibility_flags": [
     "nodejs_compat"
   ],
+  "observability": {
+    "enabled": true
+  },
+  "upload_source_maps": true,
   "vars": {
     "STUDIO_PHONE": "5547991518816"
   },
@@ -13,29 +17,7 @@
     {
       "binding": "DB",
       "database_name": "estudio-aline-andrade",
-      "database_id": "00000000-0000-0000-0000-000000000000" // substitua pelo ID real via `wrangler d1 create`
+      "database_id": "6aaf578a-2c07-41f6-8840-51359c457a9e"
     }
   ]
-  // "kv_namespaces": [
-  //   {
-  //     "binding": "MY_KV_NAMESPACE",
-  //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-  //   }
-  // ],
-  // "r2_buckets": [
-  //   {
-  //     "binding": "MY_BUCKET",
-  //     "bucket_name": "my-bucket"
-  //   }
-  // ],
-  // "d1_databases": [
-  //   {
-  //     "binding": "MY_DB",
-  //     "database_name": "my-database",
-  //     "database_id": ""
-  //   }
-  // ],
-  // "ai": {
-  //   "binding": "AI"
-  // }
 }
