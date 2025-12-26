@@ -7,8 +7,6 @@
     "dev:pages:d1": "wrangler pages dev dist --local --ip 0.0.0.0 --port 3000",
     "build": "vite build",
     "preview": "wrangler pages dev dist",
-    "deploy": "npm run build && wrangler pages deploy dist",
-    "deploy:prod": "npm run build && wrangler pages deploy dist --project-name webapp",
     "db:migrate:local": "wrangler d1 migrations apply estudio-aline-andrade --local",
     "db:migrate:prod": "wrangler d1 migrations apply estudio-aline-andrade",
     "db:migrate-passwords": "node scripts/migrate-passwords.js",
