@@ -56,9 +56,25 @@ export const renderer = jsxRenderer(({ children, title, data }: { children?: any
             })
           }}
         />
-        <script type="module" src="/static/app.js" />
+        <script src="/static/utils.js" />
+        <script src="/static/auth.js" />
         <script src="/static/pwa-notifications.js" />
         <script src="/static/mobile.js" />
+        <script src="/static/main.js" />
+
+        {context.page === 'dashboard' && (
+          <>
+            <script src="/static/dashboard.js" />
+            <script src="/static/dashboard-widgets.js" />
+            <script src="/static/employees.js" />
+          </>
+        )}
+        {context.page === 'booking' && <script src="/static/booking.js" />}
+        {context.page === 'clients' && <script src="/static/clients.js" />}
+        {context.page === 'financial' && <script src="/static/financial.js" />}
+        {context.page === 'employees' && <script src="/static/employees.js" />}
+        {context.page === 'services' && <script src="/static/services.js" />}
+        {context.page === 'login' && <script src="/static/password-reset.js" />}
       </body>
     </html>
   )

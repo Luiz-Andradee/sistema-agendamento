@@ -1,0 +1,640 @@
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('[Employees] Inicializando...')
+
+  if (document.getElementById('employeesList')) {
+    loadEmployees()
+    setupEmployeeEventListeners()
+  }
+})
+
+
+// Estado local para o gerenciador de agenda
+const scheduleState = {
+  schedule: [],
+  timeOff: [],
+  professionals: []
+}
+
+async function loadEmployees() {
+  const container = document.getElementById('employeesList')
+  if (!container) return
+
+  try {
+    container.innerHTML = `
+      <tr>
+        <td colspan="5" class="py-12 text-center text-slate-500">
+          <svg class="mx-auto h-8 w-8 animate-spin text-slate-600" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <p class="mt-2 text-sm">Carregando profissionais...</p>
+        </td>
+      </tr>
+    `
+
+    const token = localStorage.getItem('estudio-aline-panel-token')
+    const response = await fetch('/api/professionals', {
+      headers: { 'Authorization': token }
+    })
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        window.location.href = '/login'
+        return
+      }
+      throw new Error('Falha ao carregar profissionais')
+    }
+
+    const data = await response.json()
+    const professionals = data.professionals || []
+
+    // Guardar no estado local para uso no select
+    scheduleState.professionals = professionals
+
+    renderEmployeesTable(professionals)
+
+    // Inicializar o Schedule Manager após carregar os dados
+    initScheduleManager()
+
+  } catch (error) {
+    console.error('Error loading employees:', error)
+    container.innerHTML = `
+      <tr>
+        <td colspan="5" class="py-12 text-center text-red-400">
+          Erro ao carregar profissionais. <br>
+          <button onclick="loadEmployees()" class="mt-2 underline hover:text-red-300">Tentar novamente</button>
+        </td>
+      </tr>
+    `
+  }
+}
+
+function renderEmployeesTable(professionals) {
+  const container = document.getElementById('employeesList')
+  if (!container) return
+
+  if (professionals.length === 0) {
+    container.innerHTML = `
+      <tr>
+        <td colspan="5" class="py-12 text-center text-slate-400">
+          Nenhum funcionário cadastrado.
+        </td>
+      </tr>
+    `
+    return
+  }
+
+  container.innerHTML = professionals.map(emp => {
+    // Definir cores das tags/avatar baseadas na cor escolhida
+    const colorClass = emp.avatarColor || 'from-pink-400 to-rose-500'
+    const initials = emp.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+
+    // Formatar WhatsApp
+    const phone = emp.whatsapp ? emp.whatsapp.replace(/^55/, '') : '-'
+    const formattedPhone = phone !== '-' && phone.length >= 10
+      ? `(${phone.slice(0, 2)}) ${phone.slice(2, 7)}-${phone.slice(7)}`
+      : phone
+
+    return `
+      <tr class="group hover:bg-white/5 transition-colors cursor-pointer" onclick="selectProfessional('${emp.id}')">
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${colorClass} text-xs font-bold text-white shadow-lg">
+              ${initials}
+            </div>
+            <div>
+              <p class="font-medium text-white">${emp.name}</p>
+              <p class="text-xs text-slate-400 truncate max-w-[200px]">${emp.notes || ''}</p>
+            </div>
+          </div>
+        </td>
+        <td class="px-4 py-3 text-slate-300">${emp.role}</td>
+        <td class="px-4 py-3 text-slate-400 font-mono text-xs">${emp.cpf || '-'}</td>
+        <td class="px-4 py-3 text-slate-300">
+          ${emp.whatsapp ? `
+            <a href="https://wa.me/${emp.whatsapp}" target="_blank" onclick="event.stopPropagation()" class="flex items-center gap-1.5 hover:text-green-400 transition-colors">
+              <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c1.025.56 1.748.86 2.796.861 4.776 0 7.291-3.639 5.29-6.911-1.071-1.748-2.903-2.903-5.29-2.903zm0-3.172c4.956 0 9 4.044 9 9s-4.044 9-9 9c-1.595 0-3.09-.41-4.425-1.12l-5.606 1.47 1.488-5.46c-.84-1.425-1.32-3.085-1.32-4.89 0-4.956 4.044-9 9-9zm4.914 12.016c-.237.669-.942 1.258-1.637 1.346-.574.072-1.22.193-4.22-1.047-3.655-1.512-3.951-4.885-4.042-5.719-.079-.738.382-1.928 1.583-1.928.328 0 .597.027.848.064.256.037.408-.035.617.466.216.516.732 1.78.799 1.912.067.132.112.287.017.478-.095.191-.144.293-.284.455-.14.161-.295.361-.422.484-.143.138-.282.28-.117.564.166.284.737 1.213 1.583 1.966 1.092.971 1.834 1.139 2.215 1.189.28.037.514-.145.718-.363.315-.339.69-.904.978-.904.288 0 .576.134 1.157.422.58.288 1.554.819 1.77.929.215.11.359.165.412.288z"/></svg>
+              ${formattedPhone}
+            </a>
+          ` : '-'}
+        </td>
+        <td class="px-4 py-3 text-right">
+          <div class="flex justify-end gap-2" onclick="event.stopPropagation()">
+            <button onclick="openEmployeeModal('${emp.id}')" class="rounded-lg p-2 text-slate-400 hover:bg-blue-500/10 hover:text-blue-400 transition-colors" title="Editar">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+            </button>
+            <button onclick="deleteEmployee('${emp.id}')" class="rounded-lg p-2 text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors" title="Excluir">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `
+  }).join('')
+}
+
+function setupEmployeeEventListeners() {
+  const modal = document.getElementById('employeeModal')
+  const form = document.getElementById('employeeForm')
+  const addBtn = document.getElementById('addEmployeeBtn')
+  const closeBtn = document.getElementById('employeeCloseBtn')
+  const cancelBtn = document.getElementById('employeeCancel')
+
+  if (addBtn) {
+    addBtn.addEventListener('click', () => openEmployeeModal())
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeEmployeeModal)
+  }
+
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', closeEmployeeModal)
+  }
+
+  if (form) {
+    form.addEventListener('submit', handleEmployeeSubmit)
+  }
+
+  // Máscaras
+  const cpfInput = document.getElementById('employeeCPF')
+  const phoneInput = document.getElementById('employeePhone')
+
+  if (cpfInput) {
+    cpfInput.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '')
+      if (v.length > 11) v = v.slice(0, 11)
+      if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+      else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{3})/, '$1.$2.$3')
+      else if (v.length > 3) v = v.replace(/(\d{3})(\d{3})/, '$1.$2')
+      e.target.value = v
+    })
+  }
+
+  if (phoneInput) {
+    phoneInput.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '')
+      if (v.length > 11) v = v.slice(0, 11)
+      if (v.length > 10) v = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+      else if (v.length > 6) v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3')
+      else if (v.length > 2) v = v.replace(/(\d{2})(\d{0,5})/, '($1) $2')
+      e.target.value = v
+    })
+  }
+}
+
+async function openEmployeeModal(id = null) {
+  const modal = document.getElementById('employeeModal')
+  const form = document.getElementById('employeeForm')
+  const title = document.getElementById('employeeModalTitle')
+  const feedback = document.getElementById('employeeFeedback')
+
+  if (!modal || !form) return
+
+  // Reset form
+  form.reset()
+  currentEmployeeId = id
+  if (feedback) feedback.classList.add('hidden')
+
+  if (id) {
+    title.textContent = 'Editar Funcionário'
+    // Carregar dados e preencher
+    try {
+      const token = localStorage.getItem('estudio-aline-panel-token')
+      const response = await fetch('/api/professionals', { /* O ideal seria um GET /:id mas podemos filtrar da lista ou implementar endpoint específico se necessário */
+        headers: { 'Authorization': token }
+      })
+      const data = await response.json()
+      const employee = data.professionals.find(p => p.id === id)
+
+      if (employee) {
+        document.getElementById('employeeName').value = employee.name
+        document.getElementById('employeeRole').value = employee.role
+        document.getElementById('employeeColor').value = employee.avatarColor
+
+        // Novos campos
+        if (employee.cpf) document.getElementById('employeeCPF').value = employee.cpf
+        if (employee.whatsapp) {
+          // Formatar para exibição no input
+          const p = employee.whatsapp.replace(/^55/, '')
+          document.getElementById('employeePhone').value = `(${p.slice(0, 2)}) ${p.slice(2)}`
+        }
+        if (employee.address) document.getElementById('employeeAddress').value = employee.address
+        if (employee.bankName) document.getElementById('employeeBank').value = employee.bankName
+        if (employee.bankAccount) document.getElementById('employeeAccount').value = employee.bankAccount
+        if (employee.notes) document.getElementById('employeeNotes').value = employee.notes
+      }
+    } catch (e) {
+      console.error('Erro ao carregar detalhes', e)
+    }
+  } else {
+    title.textContent = 'Novo Funcionário'
+  }
+
+  modal.classList.remove('hidden')
+}
+
+function closeEmployeeModal() {
+  const modal = document.getElementById('employeeModal')
+  if (modal) modal.classList.add('hidden')
+  currentEmployeeId = null
+}
+
+async function handleEmployeeSubmit(e) {
+  e.preventDefault()
+
+  const submitBtn = e.target.querySelector('button[type="submit"]')
+  const originalText = submitBtn.textContent
+  const feedback = document.getElementById('employeeFeedback')
+
+  submitBtn.disabled = true
+  submitBtn.textContent = 'Salvando...'
+  if (feedback) feedback.classList.add('hidden')
+
+  try {
+    const rawPhone = document.getElementById('employeePhone').value.replace(/\D/g, '')
+    const whatsapp = rawPhone ? (rawPhone.length <= 11 ? `55${rawPhone}` : rawPhone) : ''
+
+    const payload = {
+      name: document.getElementById('employeeName').value,
+      role: document.getElementById('employeeRole').value,
+      avatarColor: document.getElementById('employeeColor').value,
+      whatsapp: whatsapp || null,
+      cpf: document.getElementById('employeeCPF').value || null,
+      address: document.getElementById('employeeAddress').value || null,
+      bankName: document.getElementById('employeeBank').value || null,
+      bankAccount: document.getElementById('employeeAccount').value || null,
+      notes: document.getElementById('employeeNotes').value || null
+    }
+
+    const token = localStorage.getItem('estudio-aline-panel-token')
+    const url = currentEmployeeId
+      ? `/api/professionals/${currentEmployeeId}`
+      : '/api/professionals'
+
+    const response = await fetch(url, {
+      method: currentEmployeeId ? 'PUT' : 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erro ao salvar')
+    }
+
+    closeEmployeeModal()
+    loadEmployees()
+
+    // Feedback visual (toast ou similar) poderia ser adicionado aqui
+
+  } catch (error) {
+    if (feedback) {
+      feedback.textContent = error.message
+      feedback.classList.remove('hidden')
+    }
+  } finally {
+    submitBtn.disabled = false
+    submitBtn.textContent = originalText
+  }
+}
+
+async function deleteEmployee(id) {
+  if (!confirm('Tem certeza que deseja excluir este funcionário? Esta ação não pode ser desfeita.')) {
+    return
+  }
+
+  try {
+    const token = localStorage.getItem('estudio-aline-panel-token')
+    const response = await fetch(`/api/professionals/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': token }
+    })
+
+    if (!response.ok) {
+      const data = await response.json()
+      throw new Error(data.message || 'Erro ao excluir')
+    }
+
+    loadEmployees()
+  } catch (error) {
+    alert(error.message)
+  }
+}
+
+// ==========================================
+// Schedule Manager Logic
+// ==========================================
+
+// ==========================================
+// Schedule Manager Logic
+// ==========================================
+
+function initScheduleManager() {
+  console.log('[ScheduleManager] Initializing...')
+  const professionalSelect = document.getElementById('scheduleProfessionalSelect')
+  const saveButton = document.getElementById('saveAvailability')
+  const form = document.getElementById('availabilityForm')
+  const timeOffForm = document.getElementById('timeOffForm')
+
+  if (professionalSelect) {
+    if (scheduleState.professionals.length > 0) {
+      console.log(`[ScheduleManager] Populating select with ${scheduleState.professionals.length} professionals`)
+      populateProfessionalSelect(professionalSelect)
+    } else {
+      console.warn('[ScheduleManager] No professionals found in state during init')
+    }
+
+    professionalSelect.addEventListener('change', refreshScheduleView)
+  } else {
+    console.error('[ScheduleManager] Professional select element not found!')
+  }
+
+  if (saveButton) {
+    saveButton.addEventListener('click', saveSchedule)
+  }
+
+  if (form) {
+    // Delegate clear clicks
+    form.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-role="clear"]')
+      if (btn) {
+        const row = btn.closest('tr')
+        if (row) {
+          const start = row.querySelector('[data-role="start"]')
+          const end = row.querySelector('[data-role="end"]')
+          if (start) start.value = ''
+          if (end) end.value = ''
+        }
+      }
+    })
+  }
+
+  if (timeOffForm) {
+    timeOffForm.addEventListener('submit', createTimeOffBlock)
+  }
+}
+
+function populateProfessionalSelect(selectElement) {
+  selectElement.innerHTML = '<option value="">Selecione um profissional...</option>'
+  scheduleState.professionals.forEach(p => {
+    const opt = document.createElement('option')
+    opt.value = p.id
+    opt.textContent = p.name
+    selectElement.appendChild(opt)
+  })
+}
+
+function selectProfessional(id) {
+  console.log(`[ScheduleManager] Selecting professional: ${id}`)
+  const professionalSelect = document.getElementById('scheduleProfessionalSelect')
+
+  if (professionalSelect) {
+    // Check if options are populated, if not, try to populate
+    if (professionalSelect.options.length <= 1 && scheduleState.professionals.length > 0) {
+      console.log('[ScheduleManager] Select was empty during click, re-populating...')
+      populateProfessionalSelect(professionalSelect)
+    }
+
+    professionalSelect.value = id
+
+    // Verify if value was actually set (it won't be if ID is not in options)
+    if (professionalSelect.value !== id) {
+      console.error(`[ScheduleManager] Failed to set value to ${id}. Available options: `, professionalSelect.options)
+      return
+    }
+
+    refreshScheduleView()
+    // Scroll suave até a seção da agenda
+    document.getElementById('scheduleSection').scrollIntoView({ behavior: 'smooth' })
+  } else {
+    console.error('[ScheduleManager] Select element not found during selection')
+  }
+}
+
+async function refreshScheduleView() {
+  const professionalSelect = document.getElementById('scheduleProfessionalSelect')
+  if (!professionalSelect || !professionalSelect.value) return
+
+  const professionalId = professionalSelect.value
+  const professionalName = professionalSelect.options[professionalSelect.selectedIndex].text
+
+  console.log(`[ScheduleManager] Refreshing view for: ${professionalName} (${professionalId})`)
+
+  // Update visual confirmation in Time Off form
+  const timeOffBtn = document.querySelector('#timeOffForm button[type="submit"]')
+  if (timeOffBtn) {
+    timeOffBtn.textContent = `Cadastrar bloqueio para ${professionalName.split(' ')[0]}`
+  }
+
+  try {
+    const token = localStorage.getItem('estudio-aline-panel-token')
+    const response = await fetch(`/api/professionals/${professionalId}/schedule`, {
+      headers: { 'Authorization': token }
+    })
+    const data = await response.json()
+
+    scheduleState.schedule = data.availability || []
+    scheduleState.timeOff = data.timeOff || []
+
+    renderScheduleForm()
+    renderTimeOffList()
+  } catch (error) {
+    console.error('Erro ao carregar agenda:', error)
+  }
+}
+
+function renderScheduleForm() {
+  const form = document.getElementById('availabilityForm')
+  if (!form) return
+
+  // Reset all rows first
+  const rows = form.querySelectorAll('tr[data-weekday]')
+  rows.forEach(row => {
+    const start = row.querySelector('[data-role="start"]')
+    const end = row.querySelector('[data-role="end"]')
+    if (start) start.value = ''
+    if (end) end.value = ''
+  })
+
+  // Fill from state
+  scheduleState.schedule.forEach(slot => {
+    const row = form.querySelector(`tr[data-weekday="${slot.weekday}"]`)
+    if (!row) return
+
+    const start = row.querySelector('[data-role="start"]')
+    const end = row.querySelector('[data-role="end"]')
+
+    if (start) start.value = slot.startTime
+    if (end) end.value = slot.endTime
+  })
+}
+
+async function saveSchedule(event) {
+  event.preventDefault()
+  const professionalSelect = document.getElementById('scheduleProfessionalSelect')
+  const saveButton = document.getElementById('saveAvailability')
+  const feedback = document.getElementById('availabilityFeedback')
+  const form = document.getElementById('availabilityForm')
+  const intervalInput = document.getElementById('scheduleInterval')
+
+  if (!professionalSelect || !professionalSelect.value) return
+
+  const professionalId = professionalSelect.value
+  const availability = []
+  const slotInterval = intervalInput ? Number(intervalInput.value) : 30
+
+  // Collect data
+  const rows = form.querySelectorAll('tr[data-weekday]')
+  rows.forEach(row => {
+    const weekday = parseInt(row.dataset.weekday)
+    const start = row.querySelector('[data-role="start"]').value
+    const end = row.querySelector('[data-role="end"]').value
+
+    if (start && end) {
+      availability.push({
+        weekday,
+        startTime: start,
+        endTime: end,
+        slotInterval: slotInterval > 0 ? slotInterval : 30
+      })
+    }
+  })
+
+  try {
+    if (saveButton) {
+      saveButton.textContent = 'Salvando...'
+      saveButton.disabled = true
+    }
+
+    const token = localStorage.getItem('estudio-aline-panel-token')
+    const response = await fetch(`/api/professionals/${professionalId}/schedule`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ availability })
+    })
+
+    if (!response.ok) throw new Error('Falha ao salvar')
+
+    if (feedback) {
+      feedback.textContent = 'Grade semanal atualizada com sucesso!'
+      feedback.classList.remove('hidden')
+      setTimeout(() => feedback.classList.add('hidden'), 3000)
+    }
+  } catch (error) {
+    alert('Erro ao salvar: ' + error.message)
+  } finally {
+    if (saveButton) {
+      saveButton.textContent = 'Salvar grade semanal'
+      saveButton.disabled = false
+    }
+  }
+}
+
+async function createTimeOffBlock(event) {
+  event.preventDefault()
+  const professionalSelect = document.getElementById('scheduleProfessionalSelect')
+  if (!professionalSelect || !professionalSelect.value) return
+
+  const professionalId = professionalSelect.value
+  const date = document.getElementById('timeOffDate').value
+  const start = document.getElementById('timeOffStart').value
+  const end = document.getElementById('timeOffEnd').value
+  const note = document.getElementById('timeOffNote').value
+  const feedback = document.getElementById('timeOffFeedback')
+
+  try {
+    const token = localStorage.getItem('estudio-aline-panel-token')
+    const response = await fetch(`/api/professionals/${professionalId}/time-off`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ date, startTime: start, endTime: end, note })
+    })
+
+    if (!response.ok) throw new Error('Falha ao criar bloqueio')
+
+    // Refresh
+    await refreshScheduleView()
+
+    // Reset form
+    event.target.reset()
+
+    if (feedback) {
+      feedback.textContent = 'Bloqueio criado com sucesso!'
+      feedback.classList.remove('hidden')
+      setTimeout(() => feedback.classList.add('hidden'), 3000)
+    }
+  } catch (error) {
+    alert(error.message)
+  }
+}
+
+function renderTimeOffList() {
+  const list = document.getElementById('timeOffList')
+  if (!list) return
+
+  list.innerHTML = ''
+
+  const blocks = Array.isArray(scheduleState.timeOff) ? scheduleState.timeOff : []
+
+  if (blocks.length === 0) {
+    list.innerHTML = '<p class="text-xs text-slate-400">Nenhum bloqueio cadastrado.</p>'
+    return
+  }
+
+  blocks.forEach(block => {
+    const day = block.date.split('-')[2]
+    const month = block.date.split('-')[1]
+    const formattedDate = `${day}/${month}`
+
+    const item = document.createElement('div')
+    item.className = 'flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-lg mb-2'
+    item.innerHTML = `
+              <div>
+                  <p class="text-white text-sm font-medium">${formattedDate} · ${block.startTime} - ${block.endTime}</p>
+                  <p class="text-xs text-slate-400">${block.note || 'Bloqueio administrativo'}</p>
+              </div>
+              <button class="text-red-400 hover:text-red-300 text-xs px-2 py-1" onclick="deleteTimeOff(${block.id})">Remover</button>
+          `
+    list.appendChild(item)
+  })
+}
+
+async function deleteTimeOff(id) {
+  if (!confirm('Remover este bloqueio?')) return
+  const professionalSelect = document.getElementById('scheduleProfessionalSelect')
+  if (!professionalSelect) return
+  const professionalId = professionalSelect.value
+
+  try {
+    const token = localStorage.getItem('estudio-aline-panel-token')
+    const response = await fetch(`/api/professionals/${professionalId}/time-off/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': token }
+    })
+
+    if (!response.ok) throw new Error('Erro ao deletar')
+
+    refreshScheduleView()
+  } catch (error) {
+    alert(error.message)
+  }
+}
+
+// Expor funções globais
+window.openEmployeeModal = openEmployeeModal
+window.deleteEmployee = deleteEmployee
+window.loadEmployees = loadEmployees
+window.selectProfessional = selectProfessional
+window.deleteTimeOff = deleteTimeOff
+
