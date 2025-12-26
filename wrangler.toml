@@ -1,0 +1,10 @@
+name = "sistema-agendamento"
+compatibility_date = "2025-12-23"
+
+[vars]
+STUDIO_PHONE = "5547991518816"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "estudio-aline-andrade"
+database_id = "6aaf578a-2c07-41f6-8840-51359c457a9e"
