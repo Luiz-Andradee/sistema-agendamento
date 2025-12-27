@@ -142,8 +142,13 @@ async function initFinancialPage() {
 
     function renderFinancialTable(appointments) {
         tableBody.innerHTML = ''
+        const mobileContainer = document.getElementById('financialCardsMobile')
+
         if (appointments.length === 0) {
             emptyState.classList.remove('hidden')
+            if (mobileContainer) {
+                mobileContainer.innerHTML = ''
+            }
             return
         }
         emptyState.classList.add('hidden')
@@ -154,6 +159,7 @@ async function initFinancialPage() {
             return a.time.localeCompare(b.time)
         })
 
+        // Desktop table
         tableBody.innerHTML = appointments.map(app => {
             const isPaid = !!app.paidAt
             const dateStr = formatDateString(app.date)
@@ -193,6 +199,62 @@ async function initFinancialPage() {
           </tr>
         `
         }).join('')
+
+        // Mobile cards
+        if (mobileContainer) {
+            mobileContainer.innerHTML = appointments.map(app => {
+                const isPaid = !!app.paidAt
+                const dateStr = formatDateString(app.date)
+
+                return `
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+                        <div class="mb-3 flex items-start justify-between border-b border-white/10 pb-3">
+                            <div>
+                                <h3 class="font-semibold text-white">${escapeHtml(app.customerName)}</h3>
+                                <p class="text-xs text-slate-400">${escapeHtml(app.customerPhone)}</p>
+                            </div>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${isPaid ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">
+                                ${isPaid ? 'Pago' : 'Pendente'}
+                            </span>
+                        </div>
+                        
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Data/Hora:</span>
+                                <span class="font-medium text-white">${dateStr} às ${app.time.slice(0, 5)}</span>
+                            </div>
+                            
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Serviço:</span>
+                                <span class="text-white">${escapeHtml(app.serviceName || 'Não especificado')}</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-400">Valor:</span>
+                                <input 
+                                    type="text" 
+                                    value="${formatCurrency(app.priceCents || 0)}"
+                                    data-id="${app.id}"
+                                    data-original="${app.priceCents || 0}"
+                                    class="bg-slate-900/70 border border-white/20 rounded-lg text-white font-semibold w-28 px-3 py-1.5 text-right outline-none focus:border-pink-400 transition"
+                                    onblur="updateAppointmentPrice(this)"
+                                    onfocus="this.select()"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="mt-3 border-t border-white/10 pt-3">
+                            <button 
+                                onclick="togglePaymentStatus('${app.id}', ${isPaid})"
+                                class="w-full rounded-lg px-3 py-2 text-sm font-semibold transition ${isPaid ? 'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30' : 'bg-green-500/20 text-green-300 hover:bg-green-500/30'}"
+                            >
+                                ${isPaid ? 'Marcar como Pendente' : 'Marcar como Pago'}
+                            </button>
+                        </div>
+                    </div>
+                `
+            }).join('')
+        }
     }
 
     // PDF Generation

@@ -22,7 +22,7 @@ export const DashboardPage = ({
     ]
 
     return (
-        <div className="mx-auto min-h-screen w-full max-w-6xl space-y-12 px-6 py-12">
+        <div className="mx-auto min-h-screen w-full max-w-6xl space-y-6 px-4 py-6 md:space-y-12 md:px-6 md:py-12">
             <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                     <p className="text-sm uppercase tracking-[0.2em] text-pink-300/80">Painel Operacional</p>
@@ -40,7 +40,7 @@ export const DashboardPage = ({
                         </p>
                     )}
                 </div>
-                <div className="flex flex-col items-end gap-3">
+                <div className="flex w-full flex-col items-start gap-3 md:w-auto md:items-end">
                     <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-200">
                         <p className="text-xs uppercase tracking-wide text-slate-300/80">Contato rápido</p>
                         <a
@@ -55,7 +55,7 @@ export const DashboardPage = ({
                     <div className="flex flex-wrap gap-2">
                         <a
                             href="/painel/funcionarios"
-                            className="inline-flex items-center justify-center gap-2 rounded-full bg-pink-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-pink-500"
+                            className="inline-flex items-center justify-center gap-2 rounded-full bg-pink-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-pink-500"
                         >
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -64,7 +64,7 @@ export const DashboardPage = ({
                         </a>
                         <a
                             href="/painel/servicos"
-                            className="inline-flex items-center justify-center gap-2 rounded-full bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-purple-500"
+                            className="inline-flex items-center justify-center gap-2 rounded-full bg-purple-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-purple-500"
                         >
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -73,7 +73,7 @@ export const DashboardPage = ({
                         </a>
                         <a
                             href="/painel/clients"
-                            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/5"
+                            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/5"
                         >
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -82,7 +82,7 @@ export const DashboardPage = ({
                         </a>
                         <a
                             href="/painel/financeiro"
-                            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/5"
+                            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/5"
                         >
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -91,7 +91,7 @@ export const DashboardPage = ({
                         </a>
                         <button
                             id="logoutBtn"
-                            className="inline-flex items-center justify-center gap-2 rounded-full border border-red-400/30 px-4 py-2 text-sm font-semibold text-red-200 transition hover:bg-red-500/10"
+                            className="inline-flex items-center justify-center gap-2 rounded-full border border-red-400/30 px-4 py-2.5 text-sm font-semibold text-red-200 transition hover:bg-red-500/10"
                         >
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -111,7 +111,7 @@ export const DashboardPage = ({
             </header>
 
             {/* Widgets Section */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {/* Widget: Agenda do Dia */}
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
                     <div className="mb-4 flex items-center justify-between">
@@ -422,163 +422,170 @@ export const DashboardPage = ({
                 }}
             />
 
-            <div id="bookingModal" className="fixed inset-0 z-50 flex hidden items-center justify-center bg-black/80 backdrop-blur-sm" aria-hidden="true">
-                <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-[#1e293b] p-8 shadow-2xl">
-                    <div className="mb-6 flex items-center justify-between">
-                        <h2 className="text-2xl font-bold text-white">Novo Agendamento Interno</h2>
-                        <button id="closeBookingModal" className="rounded-full p-2 text-slate-400 hover:bg-white/10 hover:text-white">
-                            <span className="sr-only">Fechar</span>
-                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <form id="bookingForm" className="grid gap-5">
-                        <div className="grid gap-2">
-                            <label className="text-sm font-medium text-slate-200" htmlFor="serviceSelect">
-                                Serviço
-                            </label>
-                            <select
-                                id="serviceSelect"
-                                required
-                                className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white outline-none transition focus:border-pink-500"
+            {/* Internal Booking Modal */}
+            <div id="bookingModal" className="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm p-4" aria-hidden="true">
+                <div className="flex h-full items-center justify-center">
+                    <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-[#1e293b] p-6 md:p-8 shadow-2xl">
+                        {/* Header with close button */}
+                        <div className="mb-6 flex items-center justify-between">
+                            <h2 className="text-2xl font-bold text-white">Novo Agendamento Interno</h2>
+                            <button
+                                id="closeBookingModal"
+                                type="button"
+                                className="rounded-full p-2 text-slate-400 transition hover:bg-white/10 hover:text-white"
                             >
-                                <option value="">Selecione um serviço</option>
-                                {services.map((service) => (
-                                    <option key={service.id} value={service.id}>
-                                        {service.name}
-                                    </option>
-                                ))}
-                            </select>
+                                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
                         </div>
 
-                        <div className="grid gap-2">
-                            <label className="text-sm font-medium text-slate-200" htmlFor="professionalSelect">
-                                Profissional
-                            </label>
-                            <select
-                                id="professionalSelect"
-                                required
-                                className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white outline-none transition focus:border-pink-500"
-                            >
-                                <option value="">Selecione a profissional</option>
-                                {professionals.map((professional) => (
-                                    <option key={professional.id} value={professional.id}>
-                                        {professional.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="grid gap-4 sm:grid-cols-2">
+                        <form id="bookingForm" className="grid gap-5">
                             <div className="grid gap-2">
-                                <label className="text-sm font-medium text-slate-200" htmlFor="dateInput">
-                                    Data
-                                </label>
-                                <input
-                                    type="date"
-                                    id="dateInput"
-                                    required
-                                    className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white outline-none transition focus:border-pink-500"
-                                />
-                            </div>
-                            <div className="grid gap-2">
-                                <label className="text-sm font-medium text-slate-200" htmlFor="timeSelect">
-                                    Horário
+                                <label className="text-sm font-medium text-slate-200" htmlFor="serviceSelect">
+                                    Serviço
                                 </label>
                                 <select
-                                    id="timeSelect"
+                                    id="serviceSelect"
                                     required
                                     className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white outline-none transition focus:border-pink-500"
                                 >
-                                    <option value="">Selecione um horário disponível</option>
+                                    <option value="">Selecione um serviço</option>
+                                    {services.map((service) => (
+                                        <option key={service.id} value={service.id}>
+                                            {service.name}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
-                        </div>
 
-                        <div className="grid gap-2">
-                            <label className="text-sm font-medium text-slate-200" htmlFor="clientSearch">
-                                Buscar Cliente (Nome, Telefone ou CPF)
-                            </label>
-                            <div className="flex gap-2">
-                                <input
-                                    id="clientSearch"
-                                    type="text"
-                                    placeholder="Digite para buscar cliente cadastrado..."
-                                    className="flex-1 rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-pink-500"
-                                />
-                                <button
-                                    id="clientSearchBtn"
-                                    type="button"
-                                    className="rounded-2xl bg-pink-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-pink-500"
+                            <div className="grid gap-2">
+                                <label className="text-sm font-medium text-slate-200" htmlFor="professionalSelect">
+                                    Profissional
+                                </label>
+                                <select
+                                    id="professionalSelect"
+                                    required
+                                    className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white outline-none transition focus:border-pink-500"
                                 >
-                                    Buscar
-                                </button>
+                                    <option value="">Selecione a profissional</option>
+                                    {professionals.map((professional) => (
+                                        <option key={professional.id} value={professional.id}>
+                                            {professional.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
-                            <div id="clientSearchResults" className="hidden"></div>
-                            <div id="clientSearchStatus" className="hidden mt-2"></div>
-                        </div>
 
-                        <div className="grid gap-2">
-                            <label className="text-sm font-medium text-slate-200" htmlFor="customerName">
-                                Nome do Cliente
-                            </label>
-                            <input
-                                id="customerName"
-                                type="text"
-                                required
-                                className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-pink-500"
-                            />
-                        </div>
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <div className="grid gap-2">
+                                    <label className="text-sm font-medium text-slate-200" htmlFor="dateInput">
+                                        Data
+                                    </label>
+                                    <input
+                                        type="date"
+                                        id="dateInput"
+                                        required
+                                        className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white outline-none transition focus:border-pink-500"
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <label className="text-sm font-medium text-slate-200" htmlFor="timeSelect">
+                                        Horário
+                                    </label>
+                                    <select
+                                        id="timeSelect"
+                                        required
+                                        className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white outline-none transition focus:border-pink-500"
+                                    >
+                                        <option value="">Selecione um horário disponível</option>
+                                    </select>
+                                </div>
+                            </div>
 
-                        <div className="grid gap-2">
-                            <label className="text-sm font-medium text-slate-200" htmlFor="customerPhone">
-                                WhatsApp
-                            </label>
-                            <input
-                                id="customerPhone"
-                                type="tel"
-                                required
-                                placeholder="Ex: 47 99151-8816"
-                                className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-pink-500"
-                            />
-                        </div>
+                            <div className="grid gap-2">
+                                <label className="text-sm font-medium text-slate-200" htmlFor="clientSearch">
+                                    Buscar Cliente (Nome, Telefone ou CPF)
+                                </label>
+                                <div className="flex gap-2">
+                                    <input
+                                        id="clientSearch"
+                                        type="text"
+                                        placeholder="Digite para buscar cliente cadastrado..."
+                                        className="flex-1 rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-pink-500"
+                                    />
+                                    <button
+                                        id="clientSearchBtn"
+                                        type="button"
+                                        className="rounded-2xl bg-pink-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-pink-500"
+                                    >
+                                        Buscar
+                                    </button>
+                                </div>
+                                <div id="clientSearchResults" className="hidden"></div>
+                                <div id="clientSearchStatus" className="hidden mt-2"></div>
+                            </div>
 
-                        <div className="grid gap-2">
-                            <label className="text-sm font-medium text-slate-200" htmlFor="customerEmail">
-                                E-mail (opcional)
-                            </label>
-                            <input
-                                id="customerEmail"
-                                type="email"
-                                className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-pink-500"
-                            />
-                        </div>
+                            <div className="grid gap-2">
+                                <label className="text-sm font-medium text-slate-200" htmlFor="customerName">
+                                    Nome do Cliente
+                                </label>
+                                <input
+                                    id="customerName"
+                                    type="text"
+                                    required
+                                    className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-pink-500"
+                                />
+                            </div>
 
-                        <div className="grid gap-2">
-                            <label className="text-sm font-medium text-slate-200" htmlFor="customerNotes">
-                                Observações
-                            </label>
-                            <textarea
-                                id="customerNotes"
-                                rows={2}
-                                className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-pink-500"
-                            />
-                        </div>
+                            <div className="grid gap-2">
+                                <label className="text-sm font-medium text-slate-200" htmlFor="customerPhone">
+                                    WhatsApp
+                                </label>
+                                <input
+                                    id="customerPhone"
+                                    type="tel"
+                                    required
+                                    placeholder="Ex: 47 99151-8816"
+                                    className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-pink-500"
+                                />
+                            </div>
 
-                        <div className="rounded-2xl border border-pink-300/40 bg-pink-500/10 px-4 py-3 text-sm text-pink-100" id="availabilityInfo">
-                            Selecione a data para ver os horários disponíveis.
-                        </div>
+                            <div className="grid gap-2">
+                                <label className="text-sm font-medium text-slate-200" htmlFor="customerEmail">
+                                    E-mail (opcional)
+                                </label>
+                                <input
+                                    id="customerEmail"
+                                    type="email"
+                                    className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-pink-500"
+                                />
+                            </div>
 
-                        <button
-                            type="submit"
-                            className="mt-4 flex w-full items-center justify-center rounded-full bg-pink-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-pink-500"
-                        >
-                            Confirmar Agendamento
-                        </button>
-                        <div id="bookingAlert" className="hidden rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-100" role="alert" />
-                    </form>
+                            <div className="grid gap-2">
+                                <label className="text-sm font-medium text-slate-200" htmlFor="customerNotes">
+                                    Observações
+                                </label>
+                                <textarea
+                                    id="customerNotes"
+                                    rows={2}
+                                    className="rounded-2xl border border-white/10 bg-slate-900/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-pink-500"
+                                />
+                            </div>
+
+                            <div className="rounded-2xl border border-pink-300/40 bg-pink-500/10 px-4 py-3 text-sm text-pink-100" id="availabilityInfo">
+                                Selecione a data para ver os horários disponíveis.
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="mt-4 flex w-full items-center justify-center rounded-full bg-pink-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-pink-500"
+                            >
+                                Confirmar Agendamento
+                            </button>
+                            <div id="bookingAlert" className="hidden rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-100" role="alert" />
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

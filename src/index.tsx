@@ -1427,7 +1427,6 @@ app.delete('/api/clients/:id', async (c) => {
     await deleteClient(c.env.DB, id)
     return c.json({ success: true })
   } catch (error: any) {
-    console.error('Error deleting client:', error)
     if (error.message && error.message.includes('constraint')) {
       return c.json({ message: 'Não é possível excluir cliente com agendamentos vinculados.' }, 409)
     }

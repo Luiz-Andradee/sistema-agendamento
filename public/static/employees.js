@@ -15,6 +15,9 @@ const scheduleState = {
   professionals: []
 }
 
+// Estado para o modal de funcionário
+let currentEmployeeId = null
+
 async function loadEmployees() {
   const container = document.getElementById('employeesList')
   if (!container) return
@@ -71,6 +74,8 @@ async function loadEmployees() {
 
 function renderEmployeesTable(professionals) {
   const container = document.getElementById('employeesList')
+  const mobileContainer = document.getElementById('employeesListMobile')
+
   if (!container) return
 
   if (professionals.length === 0) {
@@ -81,15 +86,20 @@ function renderEmployeesTable(professionals) {
         </td>
       </tr>
     `
+    if (mobileContainer) {
+      mobileContainer.innerHTML = `
+        <div class="py-12 text-center text-slate-400">
+          Nenhum funcionário cadastrado.
+        </div>
+      `
+    }
     return
   }
 
+  // Desktop table rows
   container.innerHTML = professionals.map(emp => {
-    // Definir cores das tags/avatar baseadas na cor escolhida
     const colorClass = emp.avatarColor || 'from-pink-400 to-rose-500'
     const initials = emp.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
-
-    // Formatar WhatsApp
     const phone = emp.whatsapp ? emp.whatsapp.replace(/^55/, '') : '-'
     const formattedPhone = phone !== '-' && phone.length >= 10
       ? `(${phone.slice(0, 2)}) ${phone.slice(2, 7)}-${phone.slice(7)}`
@@ -99,38 +109,93 @@ function renderEmployeesTable(professionals) {
       <tr class="group hover:bg-white/5 transition-colors cursor-pointer" onclick="selectProfessional('${emp.id}')">
         <td class="px-4 py-3">
           <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${colorClass} text-xs font-bold text-white shadow-lg">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${colorClass} text-sm font-bold text-white shadow-md">
               ${initials}
             </div>
-            <div>
-              <p class="font-medium text-white">${emp.name}</p>
-              <p class="text-xs text-slate-400 truncate max-w-[200px]">${emp.notes || ''}</p>
-            </div>
+            <span class="font-medium text-white">${emp.name}</span>
           </div>
         </td>
-        <td class="px-4 py-3 text-slate-300">${emp.role}</td>
-        <td class="px-4 py-3 text-slate-400 font-mono text-xs">${emp.cpf || '-'}</td>
-        <td class="px-4 py-3 text-slate-300">
+        <td class="px-4 py-3">${emp.role || '-'}</td>
+        <td class="px-4 py-3 font-mono text-xs">${emp.cpf || '-'}</td>
+        <td class="px-4 py-3">
           ${emp.whatsapp ? `
-            <a href="https://wa.me/${emp.whatsapp}" target="_blank" onclick="event.stopPropagation()" class="flex items-center gap-1.5 hover:text-green-400 transition-colors">
-              <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c1.025.56 1.748.86 2.796.861 4.776 0 7.291-3.639 5.29-6.911-1.071-1.748-2.903-2.903-5.29-2.903zm0-3.172c4.956 0 9 4.044 9 9s-4.044 9-9 9c-1.595 0-3.09-.41-4.425-1.12l-5.606 1.47 1.488-5.46c-.84-1.425-1.32-3.085-1.32-4.89 0-4.956 4.044-9 9-9zm4.914 12.016c-.237.669-.942 1.258-1.637 1.346-.574.072-1.22.193-4.22-1.047-3.655-1.512-3.951-4.885-4.042-5.719-.079-.738.382-1.928 1.583-1.928.328 0 .597.027.848.064.256.037.408-.035.617.466.216.516.732 1.78.799 1.912.067.132.112.287.017.478-.095.191-.144.293-.284.455-.14.161-.295.361-.422.484-.143.138-.282.28-.117.564.166.284.737 1.213 1.583 1.966 1.092.971 1.834 1.139 2.215 1.189.28.037.514-.145.718-.363.315-.339.69-.904.978-.904.288 0 .576.134 1.157.422.58.288 1.554.819 1.77.929.215.11.359.165.412.288z"/></svg>
+            <a href="https://wa.me/55${emp.whatsapp}" target="_blank" class="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-300 transition-colors">
+              <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+              </svg>
               ${formattedPhone}
             </a>
           ` : '-'}
         </td>
         <td class="px-4 py-3 text-right">
-          <div class="flex justify-end gap-2" onclick="event.stopPropagation()">
-            <button onclick="openEmployeeModal('${emp.id}')" class="rounded-lg p-2 text-slate-400 hover:bg-blue-500/10 hover:text-blue-400 transition-colors" title="Editar">
-              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+          <div class="flex justify-end gap-2">
+            <button onclick="event.stopPropagation(); openEmployeeModal('${emp.id}')" class="rounded-lg bg-blue-500/20 px-3 py-1.5 text-xs font-semibold text-blue-300 transition hover:bg-blue-500/30" title="Editar">
+              Editar
             </button>
-            <button onclick="deleteEmployee('${emp.id}')" class="rounded-lg p-2 text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors" title="Excluir">
-              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            <button onclick="event.stopPropagation(); deleteEmployee('${emp.id}', '${emp.name}')" class="rounded-lg bg-red-500/20 px-3 py-1.5 text-xs font-semibold text-red-300 transition hover:bg-red-500/30" title="Excluir">
+              Excluir
             </button>
           </div>
         </td>
       </tr>
     `
   }).join('')
+
+  // Mobile cards
+  if (mobileContainer) {
+    mobileContainer.innerHTML = professionals.map(emp => {
+      const colorClass = emp.avatarColor || 'from-pink-400 to-rose-500'
+      const initials = emp.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+      const phone = emp.whatsapp ? emp.whatsapp.replace(/^55/, '') : '-'
+      const formattedPhone = phone !== '-' && phone.length >= 10
+        ? `(${phone.slice(0, 2)}) ${phone.slice(2, 7)}-${phone.slice(7)}`
+        : phone
+
+      return `
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm" onclick="selectProfessional('${emp.id}')">
+          <div class="mb-3 flex items-center gap-3 border-b border-white/10 pb-3">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br ${colorClass} text-base font-bold text-white shadow-md">
+              ${initials}
+            </div>
+            <div class="flex-1">
+              <h3 class="font-semibold text-white">${emp.name}</h3>
+              <p class="text-sm text-slate-400">${emp.role || 'Profissional'}</p>
+            </div>
+          </div>
+          
+          <div class="space-y-2 text-sm">
+            ${emp.cpf ? `
+              <div class="flex justify-between">
+                <span class="text-slate-400">CPF:</span>
+                <span class="font-mono text-white">${emp.cpf}</span>
+              </div>
+            ` : ''}
+            
+            ${emp.whatsapp ? `
+              <div class="flex justify-between">
+                <span class="text-slate-400">WhatsApp:</span>
+                <a href="https://wa.me/55${emp.whatsapp}" target="_blank" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 text-emerald-400">
+                  <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                  </svg>
+                  ${formattedPhone}
+                </a>
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="mt-3 flex gap-2 border-t border-white/10 pt-3">
+            <button onclick="event.stopPropagation(); openEmployeeModal('${emp.id}')" class="flex-1 rounded-lg bg-blue-500/20 px-3 py-2 text-sm font-semibold text-blue-300 transition hover:bg-blue-500/30">
+              Editar
+            </button>
+            <button onclick="event.stopPropagation(); deleteEmployee('${emp.id}', '${emp.name}')" class="flex-1 rounded-lg bg-red-500/20 px-3 py-2 text-sm font-semibold text-red-300 transition hover:bg-red-500/30">
+              Excluir
+            </button>
+          </div>
+        </div>
+      `
+    }).join('')
+  }
 }
 
 function setupEmployeeEventListeners() {
@@ -232,23 +297,30 @@ async function openEmployeeModal(id = null) {
   }
 
   modal.classList.remove('hidden')
+  modal.style.display = 'flex'
 }
 
 function closeEmployeeModal() {
   const modal = document.getElementById('employeeModal')
-  if (modal) modal.classList.add('hidden')
+  if (modal) {
+    modal.classList.add('hidden')
+    modal.style.display = 'none'
+  }
   currentEmployeeId = null
 }
 
 async function handleEmployeeSubmit(e) {
   e.preventDefault()
 
-  const submitBtn = e.target.querySelector('button[type="submit"]')
-  const originalText = submitBtn.textContent
+  // Button is outside form, so get it by ID or query the modal
+  const submitBtn = document.querySelector('#employeeModal button[type="submit"]')
+  const originalText = submitBtn ? submitBtn.textContent : 'Salvar'
   const feedback = document.getElementById('employeeFeedback')
 
-  submitBtn.disabled = true
-  submitBtn.textContent = 'Salvando...'
+  if (submitBtn) {
+    submitBtn.disabled = true
+    submitBtn.textContent = 'Salvando...'
+  }
   if (feedback) feedback.classList.add('hidden')
 
   try {
@@ -298,8 +370,10 @@ async function handleEmployeeSubmit(e) {
       feedback.classList.remove('hidden')
     }
   } finally {
-    submitBtn.disabled = false
-    submitBtn.textContent = originalText
+    if (submitBtn) {
+      submitBtn.disabled = false
+      submitBtn.textContent = originalText
+    }
   }
 }
 

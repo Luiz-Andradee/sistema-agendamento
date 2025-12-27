@@ -86,13 +86,19 @@ async function loadServices() {
 
 function renderServicesTable(services) {
     const list = document.getElementById('servicesList')
+    const mobileContainer = document.getElementById('servicesListMobile')
+
     if (!list) return
 
     if (services.length === 0) {
         list.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-slate-400">Nenhum serviço cadastrad.</td></tr>'
+        if (mobileContainer) {
+            mobileContainer.innerHTML = '<p class="px-4 py-8 text-center text-slate-400">Nenhum serviço cadastrado.</p>'
+        }
         return
     }
 
+    // Desktop table
     list.innerHTML = services.map(s => `
         <tr class="hover:bg-white/5 transition">
             <td class="px-4 py-3 font-medium text-white">${escapeHtml(s.name)}</td>
@@ -110,6 +116,38 @@ function renderServicesTable(services) {
             </td>
         </tr>
     `).join('')
+
+    // Mobile cards
+    if (mobileContainer) {
+        mobileContainer.innerHTML = services.map(s => `
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+                <div class="mb-3 border-b border-white/10 pb-3">
+                    <h3 class="font-semibold text-white">${escapeHtml(s.name)}</h3>
+                </div>
+                
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Duração:</span>
+                        <span class="font-medium text-white">${s.durationMinutes} min</span>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Preço:</span>
+                        <span class="font-semibold text-emerald-400">${formatCurrency(s.priceCents)}</span>
+                    </div>
+                </div>
+
+                <div class="mt-3 flex gap-2 border-t border-white/10 pt-3">
+                    <button onclick='openServiceModal(${JSON.stringify(s)})' class="flex-1 rounded-lg bg-blue-500/20 px-3 py-2 text-sm font-semibold text-blue-300 transition hover:bg-blue-500/30">
+                        Editar
+                    </button>
+                    <button onclick="deleteService('${s.id}')" class="flex-1 rounded-lg bg-red-500/20 px-3 py-2 text-sm font-semibold text-red-300 transition hover:bg-red-500/30">
+                        Excluir
+                    </button>
+                </div>
+            </div>
+        `).join('')
+    }
 }
 
 window.openServiceModal = function (service) {

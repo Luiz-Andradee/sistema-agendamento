@@ -69,7 +69,7 @@ export const renderer = jsxRenderer(({ children, title, data }: { children?: any
             <script src="/static/employees.js" />
           </>
         )}
-        {context.page === 'booking' && <script src="/static/booking.js" />}
+
         {context.page === 'clients' && <script src="/static/clients.js" />}
         {context.page === 'financial' && <script src="/static/financial.js" />}
         {context.page === 'employees' && <script src="/static/employees.js" />}

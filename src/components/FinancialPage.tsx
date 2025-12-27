@@ -11,7 +11,7 @@ export const FinancialPage = () => (
             <div className="flex gap-3">
                 <a
                     href="/painel"
-                    className="inline-flex items-center justify-center rounded-full border border-white/10 px-6 py-2 text-sm font-semibold text-white transition hover:bg-white/5"
+                    className="inline-flex items-center justify-center rounded-full border border-white/10 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/5"
                 >
                     Voltar ao Painel
                 </a>
@@ -65,22 +65,31 @@ export const FinancialPage = () => (
                 </div>
             </div>
 
-            <div className="mt-6 overflow-x-auto">
-                <table id="financialTable" className="w-full text-left text-sm text-slate-300">
-                    <thead className="border-b border-white/10 text-xs uppercase text-slate-400">
-                        <tr>
-                            <th className="px-4 py-3">Data</th>
-                            <th className="px-4 py-3">Cliente</th>
-                            <th className="px-4 py-3">Serviço</th>
-                            <th className="px-4 py-3">Valor</th>
-                            <th className="px-4 py-3 text-center">Status Pagamento</th>
-                            <th className="px-4 py-3 text-right">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="financialTableBody" className="divide-y divide-white/5">
-                        {/* Rows injected by JS */}
-                    </tbody>
-                </table>
+            <div className="mt-6">
+                {/* Desktop Table */}
+                <div className="hidden overflow-x-auto md:block">
+                    <table id="financialTable" className="w-full text-left text-sm text-slate-300">
+                        <thead className="border-b border-white/10 text-xs uppercase text-slate-400">
+                            <tr>
+                                <th className="px-4 py-3">Data</th>
+                                <th className="px-4 py-3">Cliente</th>
+                                <th className="px-4 py-3">Serviço</th>
+                                <th className="px-4 py-3">Valor</th>
+                                <th className="px-4 py-3 text-center">Status Pagamento</th>
+                                <th className="px-4 py-3 text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="financialTableBody" className="divide-y divide-white/5">
+                            {/* Rows injected by JS */}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div id="financialCardsMobile" className="block space-y-3 md:hidden">
+                    {/* Cards injected by JS */}
+                </div>
+
                 <p id="financialEmpty" className="hidden py-8 text-center text-slate-400">Nenhum registro encontrado para este período.</p>
             </div>
         </section>

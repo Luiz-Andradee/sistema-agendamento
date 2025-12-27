@@ -30,7 +30,8 @@ export const ServicesPage = () => (
                 </button>
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-white/10">
+            {/* Desktop Table */}
+            <div className="hidden overflow-hidden rounded-2xl border border-white/10 md:block">
                 <table className="min-w-full divide-y divide-white/10 text-sm">
                     <thead className="bg-white/5 text-xs uppercase tracking-wide text-slate-300">
                         <tr>
@@ -44,6 +45,11 @@ export const ServicesPage = () => (
                         {/* Rows injected by services.js */}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div id="servicesListMobile" className="block space-y-3 md:hidden">
+                {/* Cards injected by services.js */}
             </div>
         </div>
 

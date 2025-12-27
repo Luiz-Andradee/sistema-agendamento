@@ -10,6 +10,10 @@
     "enabled": true
   },
   "upload_source_maps": true,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
   "vars": {
     "STUDIO_PHONE": "5547991518816"
   },

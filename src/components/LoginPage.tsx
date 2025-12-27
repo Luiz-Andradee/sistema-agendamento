@@ -1,12 +1,12 @@
 export const LoginPage = () => (
-    <div className="flex min-h-screen flex-col items-center justify-center px-6 py-12">
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-8 md:px-6 md:py-12">
         <div className="w-full max-w-sm space-y-8">
             <div className="text-center">
                 <h2 className="text-3xl font-bold tracking-tight text-white">Estúdio Aline Andrade</h2>
                 <p className="mt-2 text-sm text-slate-400">Área restrita para equipe</p>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-sm">
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-sm md:p-8">
                 <form id="loginForm" className="space-y-6">
                     <div>
                         <label htmlFor="user" className="block text-sm font-medium text-slate-300">
@@ -65,7 +65,7 @@ export const LoginPage = () => (
         </div>
 
         {/* Modal: Recuperar Senha com CPF */}
-        <div id="requestResetModal" className="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm">
+        <div id="requestResetModal" className="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
             <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-white/10 p-6 shadow-2xl">
                 <h3 className="text-lg font-semibold text-white mb-4">Recuperar Senha</h3>
                 <form id="requestResetForm" className="space-y-4">
@@ -121,7 +121,7 @@ export const LoginPage = () => (
         </div>
 
         {/* Modal: Redefinir Senha */}
-        <div id="resetPasswordModal" className="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm">
+        <div id="resetPasswordModal" className="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
             <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-white/10 p-6 shadow-2xl">
                 <h3 className="text-lg font-semibold text-white mb-4">Nova Senha</h3>
                 <form id="resetPasswordForm" className="space-y-4">

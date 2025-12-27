@@ -244,18 +244,11 @@ export async function getSchedulingContext(
         db.prepare('SELECT 1 FROM professional_availability WHERE professional_id = ? LIMIT 1').bind(professionalId).first()
     ])
 
-    // Debugging logs
-    console.log(`[getSchedulingContext] Date: ${date} Weekday: ${weekday} hasConfig: ${!!hasConfig}`)
-    console.log(`[getSchedulingContext] Windows found: ${windows.length}`, windows)
-    console.log(`[getSchedulingContext] TimeOff found: ${timeOff.length}`, timeOff)
-
     // If professional has configuration but no windows for this day, they are closed.
     // If they have NO configuration at all, we use the default fallback.
     const effectiveWindows = windows.length > 0
         ? windows
         : (hasConfig ? [] : [DEFAULT_AVAILABILITY_WINDOW])
-
-    console.log(`[getSchedulingContext] Effective windows:`, effectiveWindows)
 
     return {
         windows: effectiveWindows,
@@ -618,7 +611,7 @@ export async function triggerWhatsAppAutomation(
 
     if (!response.ok) {
         const errorText = await response.text().catch(() => 'Erro desconhecido na API do WhatsApp.')
-        console.warn('WhatsApp API error', errorText)
+        // WhatsApp API error - silently fail in production
     }
 }
 
