@@ -691,6 +691,14 @@ function setupRebookModal() {
             return
         }
 
+        // Validate that date is not in the past
+        const today = new Date().toISOString().split('T')[0]
+
+        if (date < today) {
+            showRebookModalFeedback('Não é possível reagendar para uma data passada.', true)
+            return
+        }
+
         try {
             const response = await apiPost(`/appointments/${state.activeRebook.id}/rebook-approve`, { date, time })
 

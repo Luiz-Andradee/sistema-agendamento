@@ -6,12 +6,6 @@ Sistema completo de agendamento online com painel administrativo responsivo, ges
 
 ### ✨ Principais Funcionalidades
 
-#### Para Clientes
-- 🌐 **Landing page responsiva** para agendamento de serviços
-- 📱 **PWA instalável** - funciona como app nativo no celular
-- 🔄 **Reagendamento online** com aprovação da equipe
-- 📲 **Integração WhatsApp** para comunicação direta
-
 #### Para Equipe do Estúdio
 - 🔐 **Painel administrativo completo** com autenticação segura
 - 👥 **Gestão de clientes** com histórico e dados personalizados
